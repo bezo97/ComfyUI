@@ -314,6 +314,7 @@ def start_comfyui(asyncio_loop=None):
     setup_database()
 
     prompt_server.add_routes()
+    prompt_server.serve_api_spec()
     hijack_progress(prompt_server)
 
     threading.Thread(target=prompt_worker, daemon=True, args=(prompt_server.prompt_queue, prompt_server,)).start()

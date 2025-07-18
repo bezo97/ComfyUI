@@ -20,6 +20,13 @@ from io import BytesIO
 
 import aiohttp
 from aiohttp import web
+from aiohttp_apispec import (
+    docs,
+    request_schema,
+    response_schema,
+    setup_aiohttp_apispec,
+)
+from marshmallow import Schema, fields
 import logging
 
 import mimetypes
@@ -37,6 +44,15 @@ from app.custom_node_manager import CustomNodeManager
 from typing import Optional, Union
 from api_server.routes.internal.internal_routes import InternalRoutes
 from protocol import BinaryEventTypes
+
+def inline_schema(name, **fields_map):
+    """ Utility function to create an inline schema for aiohttp_apispec """
+    return type(name+"Schema", (Schema,), fields_map)()
+
+
+def inline_schema_list(name, **fields_map):
+    """ Utility function to create an inline schema for aiohttp_apispec where the top-level is a list """
+    return type(name+"Schema", (Schema,), fields_map)(many=True)
 
 async def send_socket_catch_exception(function, message):
     try:
@@ -258,6 +274,16 @@ class PromptServer():
             return response
 
         @routes.get("/embeddings")
+        @docs(
+            tags=["Core"],
+            summary="(UI) Get embeddings",
+            description="Returns a list of the files located in the embeddings/ directory that can be used as arguments for embedding nodes. The file extension is omitted.",
+        )
+        @request_schema(inline_schema("EmbeddingRequestTestParams",
+            my_test_param1=fields.Int(required=True, description="Test description of a parameter"),
+            my_test_param2=fields.Boolean(description="description for my_test_param2")
+        ))
+        @response_schema(inline_schema_list("EmbeddingNames"))
         def get_embeddings(request):
             embeddings = folder_paths.get_filename_list("embeddings")
             return web.json_response(list(map(lambda a: os.path.splitext(a)[0], embeddings)))
@@ -790,6 +816,18 @@ class PromptServer():
         self.app.add_routes([
             web.static('/', self.web_root),
         ])
+
+    def serve_api_spec(self):
+        """
+        Serve the OpenAPI specification for the API. Must be called after routes are added.
+        """
+        setup_aiohttp_apispec(
+            app=self.app, 
+            title="ComfyUI API Documentation", 
+            version="v1",
+            url="/api/docs/swagger.json",
+            swagger_path="/api/docs",
+        )
 
     def get_queue_info(self):
         prompt_info = {}
