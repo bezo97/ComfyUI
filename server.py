@@ -817,18 +817,26 @@ class PromptServer():
             web.static('/', self.web_root),
         ])
 
-    def serve_api_spec(self):
+    def serve_api_spec(self, dump):
         """
-        Serve the OpenAPI specification for the API. Must be called after routes are added.
+        Serve the OpenAPI specification for the API.
+            :param dump: If True, writes the spec to json/yaml files in the base path.
         """
-        spec = setup_aiohttp_apispec(
+        openapi_doc = setup_aiohttp_apispec(
             app=self.app, 
             title="ComfyUI API Documentation", 
             version="v1",
             url="/api/docs/swagger.json",
             swagger_path="/api/docs",
         )
-        print(json.dumps(spec.swagger_dict()))
+        if(dump):
+            async def dump_spec(_app):
+                output_folder = folder_paths.base_path
+                with open(os.path.join(output_folder, 'swagger.json'), "w") as f:
+                    f.write(json.dumps(openapi_doc.swagger_dict(), indent=2))
+                with open(os.path.join(output_folder, 'swagger.yaml'), "w") as f:
+                    f.write(openapi_doc.spec.to_yaml())
+            self.app.on_startup.append(dump_spec) # after all routes are registered
 
     def get_queue_info(self):
         prompt_info = {}

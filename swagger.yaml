@@ -1,0 +1,106 @@
+paths:
+  /api/embeddings:
+    head:
+      responses:
+        '200':
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/EmbeddingNames'
+          description: ''
+      parameters:
+      - in: body
+        required: false
+        name: body
+        schema:
+          $ref: '#/definitions/EmbeddingRequestTestParams'
+      tags:
+      - Core
+      summary: (UI) Get embeddings
+      description: Returns a list of the files located in the embeddings/ directory
+        that can be used as arguments for embedding nodes. The file extension is omitted.
+      produces:
+      - application/json
+    get:
+      responses:
+        '200':
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/EmbeddingNames'
+          description: ''
+      parameters:
+      - in: body
+        required: false
+        name: body
+        schema:
+          $ref: '#/definitions/EmbeddingRequestTestParams'
+      tags:
+      - Core
+      summary: (UI) Get embeddings
+      description: Returns a list of the files located in the embeddings/ directory
+        that can be used as arguments for embedding nodes. The file extension is omitted.
+      produces:
+      - application/json
+  /embeddings:
+    head:
+      responses:
+        '200':
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/EmbeddingNames'
+          description: ''
+      parameters:
+      - in: body
+        required: false
+        name: body
+        schema:
+          $ref: '#/definitions/EmbeddingRequestTestParams'
+      tags:
+      - Core
+      summary: (UI) Get embeddings
+      description: Returns a list of the files located in the embeddings/ directory
+        that can be used as arguments for embedding nodes. The file extension is omitted.
+      produces:
+      - application/json
+    get:
+      responses:
+        '200':
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/EmbeddingNames'
+          description: ''
+      parameters:
+      - in: body
+        required: false
+        name: body
+        schema:
+          $ref: '#/definitions/EmbeddingRequestTestParams'
+      tags:
+      - Core
+      summary: (UI) Get embeddings
+      description: Returns a list of the files located in the embeddings/ directory
+        that can be used as arguments for embedding nodes. The file extension is omitted.
+      produces:
+      - application/json
+info:
+  title: ComfyUI API Documentation
+  version: v1
+swagger: '2.0'
+definitions:
+  EmbeddingRequestTestParams:
+    type: object
+    properties:
+      my_test_param1:
+        type: integer
+        description: Test description of a parameter
+      my_test_param2:
+        type: boolean
+        description: description for my_test_param2
+    required:
+    - my_test_param1
+  EmbeddingNames:
+    type: object
+    properties: {}
