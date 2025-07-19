@@ -821,13 +821,14 @@ class PromptServer():
         """
         Serve the OpenAPI specification for the API. Must be called after routes are added.
         """
-        setup_aiohttp_apispec(
+        spec = setup_aiohttp_apispec(
             app=self.app, 
             title="ComfyUI API Documentation", 
             version="v1",
             url="/api/docs/swagger.json",
             swagger_path="/api/docs",
         )
+        print(json.dumps(spec.swagger_dict()))
 
     def get_queue_info(self):
         prompt_info = {}
